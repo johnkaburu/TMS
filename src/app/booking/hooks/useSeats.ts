@@ -1,11 +1,10 @@
-// hooks/useSeats.ts
 "use client";
 
 import { useState, useEffect } from "react";
 
 export const useSeats = (totalTravelers: number) => {
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const totalSeats = 40;
+  const totalSeats = 50;
 
   // Clear seats if passenger count drops below selected seats
   useEffect(() => {
@@ -16,16 +15,16 @@ export const useSeats = (totalTravelers: number) => {
       setSelectedSeats([]);
     }
 
-    if (totalTravelers === 0 && selectedSeats.length > 0) {
-      setSelectedSeats([]);
-    }
+    // if (totalTravelers === 0 && selectedSeats.length > 0) {
+    //   setSelectedSeats([]);
+    // }
   }, [totalTravelers, selectedSeats.length]);
 
   const toggleSeat = (seat: string) => {
-    if (totalTravelers === 0) {
-      alert("Please add at least one passenger before selecting seats.");
-      return;
-    }
+    // if (totalTravelers === 0) {
+    //   alert("Please add at least one passenger before selecting seats.");
+    //   return;
+    // }
 
     setSelectedSeats((prev) => {
       // Deselect if already selected

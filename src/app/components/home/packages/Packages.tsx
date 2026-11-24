@@ -1,84 +1,57 @@
 import React from "react";
+import Link from "next/link";
+import { ArrowRight, Armchair, Briefcase, Check, Crown, Sparkles } from "lucide-react";
+import { FARE_CLASSES, FareClassId } from "@/lib/railData";
 import "./packages.scss";
 
-const Packages = () => {
-  return (
-    <div className="packages-container">
-      <div className="pricingTable">
-        <h2 className="pricingTable-title">
-          Find a plan that is right for you.
-        </h2>
-        <p className="pricingTable-subtitle">
-          Every plan comes with a 7-day Cancellation Period.
-        </p>
+const ICONS: Record<FareClassId, React.ReactNode> = {
+  economy: <Armchair size={20} />,
+  business: <Briefcase size={20} />,
+  first: <Crown size={20} />,
+};
 
-        <ul className="pricingTable-firstTable">
-  <li className="pricingTable-firstTable_table">
-    <h1 className="pricingTable-firstTable_table__header">
-      Economy Class
-    </h1>
-    <p className="pricingTable-firstTable_table__pricing">
-      <span>KSh</span>
-      <span>1,200</span>
-      <span>Per Trip</span>
-    </p>
-    <ul className="pricingTable-firstTable_table__options">
-      <li>Standard Seating</li>
-      <li>Free WiFi Access</li>
-      <li>One Carry-on Bag</li>
-      <li>Complimentary Water</li>
-    </ul>
-    <button className="pricingTable-firstTable_table__getstart">
-      Book Now
-    </button>
-  </li>
+const Packages = () => (
+  <section className="section classes" id="classes">
+    <div className="container">
+      <div className="section-head">
+        <span className="eyebrow"><Sparkles size={14} /> Travel classes</span>
+        <h2 className="section-title">Find a class that&apos;s right for you</h2>
+        <p className="section-lead">Simple per-trip pricing. Every ticket comes with a 7-day cancellation period.</p>
+      </div>
 
-  <li className="pricingTable-firstTable_table">
-    <h1 className="pricingTable-firstTable_table__header">
-      Business Class
-    </h1>
-    <p className="pricingTable-firstTable_table__pricing">
-      <span>KSh</span>
-      <span>2,500</span>
-      <span>Per Trip</span>
-    </p>
-    <ul className="pricingTable-firstTable_table__options">
-      <li>Premium Reclining Seats</li>
-      <li>Free WiFi & Power Outlets</li>
-      <li>Two Checked Bags</li>
-      <li>Complimentary Meal & Drinks</li>
-      <li>Priority Boarding</li>
-      <li>Extra Legroom</li>
-    </ul>
-    <button className="pricingTable-firstTable_table__getstart">
-      Book Now
-    </button>
-  </li>
+      <div className="classes__grid">
+        {FARE_CLASSES.map((c) => (
+          <article key={c.id} className={`fare ${c.featured ? "fare--featured" : ""}`}>
+            {c.featured && <span className="fare__ribbon">Most popular</span>}
 
-  <li className="pricingTable-firstTable_table">
-    <h1 className="pricingTable-firstTable_table__header">
-      First Class
-    </h1>
-    <p className="pricingTable-firstTable_table__pricing">
-      <span>KSh</span>
-      <span>4,800</span>
-      <span>Per Trip</span>
-    </p>
-    <ul className="pricingTable-firstTable_table__options">
-      <li>Luxury Private Cabins</li>
-      <li>Free WiFi Access</li>
-      <li>Unlimited Checked Bags</li>
-      <li>Gourmet Dining Service</li>
-      <li>Priority Boarding & Lounge</li>
-    </ul>
-    <button className="pricingTable-firstTable_table__getstart">
-      Book Now
-    </button>
-  </li>
-</ul>
+            <header className="fare__head">
+              <span className="fare__icon">{ICONS[c.id]}</span>
+              <div>
+                <h3 className="fare__name">{c.name}</h3>
+                <p className="fare__tagline">{c.tagline}</p>
+              </div>
+            </header>
+
+            <p className="fare__price">
+              <span className="fare__currency">KSh</span>
+              <span className="fare__amount">{c.price.toLocaleString("en-KE")}</span>
+              <span className="fare__per">/ trip</span>
+            </p>
+
+            <ul className="fare__features">
+              {c.features.map((f) => (
+                <li key={f}><Check size={16} strokeWidth={3} /> {f}</li>
+              ))}
+            </ul>
+
+            <Link href={`/booking?class=${c.id}`} className={`btn btn--block ${c.featured ? "btn--primary" : "btn--outline"}`}>
+              Book {c.name} <ArrowRight size={16} className="btn__arrow" />
+            </Link>
+          </article>
+        ))}
       </div>
     </div>
-  );
-};
+  </section>
+);
 
 export default Packages;

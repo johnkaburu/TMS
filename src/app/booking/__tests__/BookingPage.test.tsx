@@ -30,4 +30,27 @@ describe('BookingPage Component', () => {
     expect(submitButton).not.toBeDisabled();
     // We could simulate form submit if needed
   });
+
+  test('prefills only the destination from a ?to= link', () => {
+    window.history.pushState({}, '', '/booking?to=Naivasha');
+    render(<BookingPage />);
+
+    expect(screen.getByDisplayValue('Naivasha')).toBeInTheDocument();
+    expect(screen.getAllByRole('combobox')[0]).toHaveValue('');
+
+    window.history.pushState({}, '', '/');
+  });
+
+  test('a station picked in one list is hidden from the other', () => {
+    render(<BookingPage />);
+    const [origin, destination] = screen.getAllByRole('combobox') as HTMLSelectElement[];
+    const options = (el: HTMLSelectElement) => Array.from(el.options).map((o) => o.value);
+
+    fireEvent.change(origin, { target: { value: 'Nairobi' } });
+    expect(options(destination)).not.toContain('Nairobi');
+
+    fireEvent.change(destination, { target: { value: 'Mombasa' } });
+    expect(options(origin)).not.toContain('Mombasa');
+    expect(options(origin)).toContain('Nairobi');
+  });
 });

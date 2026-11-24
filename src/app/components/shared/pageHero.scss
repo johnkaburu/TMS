@@ -1,0 +1,64 @@
+@import "../../tokens";
+
+.page-hero {
+  position: relative;
+  overflow: hidden;
+  background: $gradient-hero-brand;
+  color: $text-inverse;
+  padding: clamp(2.5rem, 6vw, 4rem) 0 clamp(2.5rem, 6vw, 3.75rem);
+  @include rail-track;
+
+  &--overlap {
+    padding-bottom: 6.5rem;
+  }
+
+  &__bg {
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  &--image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(120deg, rgba($navy, 0.94) 0%, rgba($primary-800, 0.82) 55%, rgba($primary-600, 0.55) 100%);
+  }
+
+  &__inner {
+    @include container;
+    position: relative;
+    z-index: 2;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 999px;
+    background: rgba(#fff, 0.12);
+    border: 1px solid rgba(#fff, 0.2);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+  }
+
+  &__title {
+    margin-top: 1rem;
+    font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  &__subtitle {
+    max-width: 580px;
+    margin-top: 0.75rem;
+    color: rgba(#fff, 0.8);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+}

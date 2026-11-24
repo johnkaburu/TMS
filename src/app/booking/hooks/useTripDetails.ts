@@ -1,9 +1,9 @@
-// hooks/useTripDetails.ts
 "use client";
 
 import { useState, useEffect } from "react";
 import { TripType, TimeSlot } from "../types/booking";
 import { getAvailableTimesForDate } from "../utils/timeUtils";
+import { STATIONS } from "@/lib/railData";
 
 export const useTripDetails = () => {
   const [origin, setOrigin] = useState<string>("");
@@ -22,15 +22,7 @@ export const useTripDetails = () => {
     "evening",
   ]);
 
-  const stations = [
-    "Nairobi",
-    "Mombasa",
-    "Kisumu",
-    "Nakuru",
-    "Eldoret",
-    "Malindi",
-    "Voi",
-  ];
+  const stations: string[] = [...STATIONS];
 
   // Update available times when travel date changes
   useEffect(() => {

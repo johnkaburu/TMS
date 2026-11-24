@@ -1,12 +1,11 @@
-// hooks/useContactInfo.ts
 "use client";
 
 import { useState } from "react";
 
 export const useContactInfo = () => {
-  const [contactName, setContactName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [phone, setPhone] = useState<string>("");
+  const [contactName, setContactName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   return {
     contactName,

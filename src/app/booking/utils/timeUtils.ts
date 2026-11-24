@@ -1,5 +1,3 @@
-// utils/timeUtils.ts
-
 import { TimeSlot } from "../types/booking";
 
 export const getAvailableTimesForDate = (date: string): TimeSlot[] => {
@@ -15,7 +13,7 @@ export const getAvailableTimesForDate = (date: string): TimeSlot[] => {
   }
 
   // Filter based on current hour
-  const hour = now.getHours();
+  const hour:number = now.getHours();
   if (hour < 8) return times;
   if (hour < 12) return ["afternoon", "evening"];
   if (hour < 18) return ["evening"];

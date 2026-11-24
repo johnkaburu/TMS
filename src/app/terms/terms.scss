@@ -1,0 +1,136 @@
+@import "../tokens";
+
+.terms-page {
+  background: $neutral-50;
+  padding-bottom: 4rem;
+
+  &__layout {
+    @include container;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 2.5rem;
+    padding-top: 2.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    &__layout { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+}
+
+.terms-toc {
+  position: sticky;
+  top: $nav-height + 24px;
+
+  &__title {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $text-tertiary;
+  }
+
+  ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 2px solid $neutral-200;
+  }
+
+  a {
+    display: block;
+    margin-left: -2px;
+    padding: 0.4rem 0.9rem;
+    border-left: 2px solid transparent;
+    font-size: 0.9rem;
+    color: $text-secondary;
+    transition: color 0.2s, border-color 0.2s;
+    @include focus-ring;
+
+    &:hover {
+      color: $primary-700;
+      border-left-color: $primary-500;
+    }
+  }
+
+  @media (max-width: 900px) {
+    position: static;
+    padding: 1.25rem;
+    border-radius: $radius-lg;
+    background: #fff;
+    border: 1px solid $neutral-200;
+
+    ol {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: none;
+    }
+
+    a {
+      margin: 0;
+      padding: 0.35rem 0;
+      border: none;
+    }
+  }
+}
+
+.terms-body {
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border-radius: $radius-lg;
+  background: #fff;
+  border: 1px solid $neutral-200;
+  box-shadow: $shadow-card;
+
+  &__section {
+    & + & {
+      margin-top: 2.25rem;
+      padding-top: 2.25rem;
+      border-top: 1px solid $neutral-100;
+    }
+
+    h2 {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: $neutral-900;
+
+      span {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: $primary-500;
+        font-variant-numeric: tabular-nums;
+      }
+    }
+
+    p,
+    li {
+      font-size: 0.97rem;
+      line-height: 1.75;
+      color: $neutral-600;
+    }
+
+    p + p { margin-top: 0.75rem; }
+
+    ul {
+      margin: 0 0 0.75rem;
+      padding-left: 1.25rem;
+    }
+
+    a {
+      color: $primary-600;
+      font-weight: 600;
+      &:hover { text-decoration: underline; }
+    }
+
+    strong { color: $neutral-800; }
+  }
+}

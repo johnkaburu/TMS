@@ -1,0 +1,130 @@
+@import "../../tokens";
+
+.trip-search {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 1.5rem;
+  border-radius: $radius-xl;
+  background: #fff;
+  color: $text-primary;
+  box-shadow: $shadow-lg;
+
+  &__toggle {
+    display: inline-flex;
+    align-self: flex-start;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: $radius-md;
+    background: $neutral-100;
+
+    label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1rem;
+      border-radius: $radius-sm;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: $neutral-600;
+      cursor: pointer;
+      transition: all 0.2s $ease;
+
+      &.is-active {
+        background: #fff;
+        color: $primary-700;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+      }
+
+      &:has(input:focus-visible) { box-shadow: $focus-ring; }
+    }
+
+    input { position: absolute; opacity: 0; pointer-events: none; }
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  &__route {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: end;
+    gap: 0.6rem;
+  }
+
+  &__field { min-width: 0; }
+
+  &__swap {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    border: 1.5px solid $neutral-200;
+    background: #fff;
+    color: $primary-600;
+    cursor: pointer;
+    transition: all 0.25s $ease;
+    @include focus-ring;
+
+    &:hover {
+      background: $primary-50;
+      border-color: $primary-300;
+      transform: rotate(180deg);
+    }
+  }
+
+  &__submit {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  // ---------------------------------------------------------------- Bar variant (search page)
+  &--bar {
+    padding: 1.1rem 1.25rem;
+    border-radius: $radius-lg;
+
+    .trip-search__fields {
+      grid-template-columns: minmax(0, 2.4fr) repeat(auto-fit, minmax(150px, 1fr));
+      align-items: end;
+    }
+
+    .trip-search__route { grid-column: auto; }
+
+    .trip-search__submit {
+      grid-column: auto;
+      height: 48px;
+    }
+  }
+
+  @media (max-width: 900px) {
+    &--bar .trip-search__fields { grid-template-columns: 1fr 1fr; }
+    &--bar .trip-search__route,
+    &--bar .trip-search__submit { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 520px) {
+    padding: 1.1rem;
+
+    &__fields,
+    &--bar &__fields { grid-template-columns: 1fr; }
+
+    &__route {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
+
+    &__swap {
+      justify-self: center;
+      margin: 0.25rem 0 0;
+      transform: rotate(90deg);
+
+      &:hover { transform: rotate(270deg); }
+    }
+  }
+}

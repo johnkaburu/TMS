@@ -1,21 +1,20 @@
-import React from 'react'
-import './Destinations.scss'
-import DestinationCard from './DestinationCard'
+import React from "react";
+import { Compass } from "lucide-react";
+import DestinationCard from "./DestinationCard";
+import "./Destinations.scss";
 
-const Destinations = () => {
-  return (
-    <section className="destinations">
-  <div className="container">
-    <h2>Popular Destinations</h2>
-    <p>Discover top travel spots served by our trains</p>
+const Destinations = () => (
+  <section className="section section--muted destinations">
+    <div className="container">
+      <div className="section-head">
+        <span className="eyebrow"><Compass size={14} /> Explore</span>
+        <h2 className="section-title">Popular destinations</h2>
+        <p className="section-lead">Discover top travel spots served by our trains, from coastal beaches to lakeside escapes.</p>
+      </div>
 
-    <div className="destination-cards-container">
       <DestinationCard />
     </div>
-  </div>
-</section>
+  </section>
+);
 
-  )
-}
-
-export default Destinations
+export default Destinations;
