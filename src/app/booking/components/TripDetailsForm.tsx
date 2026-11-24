@@ -1,10 +1,24 @@
 "use client";
 
 import React from "react";
+import { ArrowLeftRight, ArrowRight, CalendarDays, Crown, Briefcase, Armchair, MapPin, Moon, Navigation, Repeat, Sun, Sunrise, TriangleAlert } from "lucide-react";
 import type { BookingHook } from "../hooks/useBookingLogic";
-import type { TimeSlot } from "../types/booking";
+import type { TimeSlot, TripType } from "../types/booking";
+import { ChoiceGroup, ChoiceOption, Field, Section } from "./ui";
 
-const TripDetailsForm: React.FC<{ booking: BookingHook }> = ({ booking }) => {
+const TIME_OPTIONS: { value: TimeSlot; label: string; icon: React.ReactNode }[] = [
+  { value: "morning", label: "Morning", icon: <Sunrise size={18} /> },
+  { value: "afternoon", label: "Afternoon", icon: <Sun size={18} /> },
+  { value: "evening", label: "Evening", icon: <Moon size={18} /> },
+];
+
+export const CLASS_OPTIONS: ChoiceOption<string>[] = [
+  { value: "economy", label: "Economy", meta: "Standard seating", icon: <Armchair size={18} /> },
+  { value: "business", label: "Business", meta: "Extra legroom", icon: <Briefcase size={18} /> },
+  { value: "first", label: "First", meta: "Premium comfort", icon: <Crown size={18} /> },
+];
+
+const TripDetailsForm: React.FC<{ booking: BookingHook; complete?: boolean }> = ({ booking, complete }) => {
   const {
     origin,
     destination,
@@ -33,86 +47,149 @@ const TripDetailsForm: React.FC<{ booking: BookingHook }> = ({ booking }) => {
   } = booking;
 
   const todayIso = new Date().toISOString().split("T")[0];
+  const returnTimes = getAvailableReturnTimes(preferredTime);
+  const noReturnTimes = Boolean(preferredTime) && returnTimes.length === 0;
+
+  const swapStations = () => {
+    setOrigin(destination);
+    setDestination(origin);
+  };
 
   return (
-    <div className="booking__section">
-      <h3>Trip Details</h3>
+    <Section
+      step={2}
+      icon={<Navigation size={18} />}
+      title="Trip Details"
+      description="Choose your route, travel dates and preferred class."
+      complete={complete}
+    >
+      <ChoiceGroup<TripType>
+        name="tripType"
+        legend="Trip type"
+        variant="segmented"
+        value={tripType}
+        onChange={setTripType}
+        disabled={isSubmitting}
+        options={[
+          { value: "one-way", label: "One-way", icon: <ArrowRight size={16} /> },
+          { value: "return", label: "Return", icon: <Repeat size={16} /> },
+        ]}
+      />
 
-      <div className="form-row">
-        <select value={origin} onChange={(e) => setOrigin(e.target.value)} required disabled={isSubmitting}>
-          <option value="">Select Origin</option>
-          {stations.map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
+      <div className="route">
+        <Field label="From" icon={<MapPin size={16} />}>
+          <select value={origin} onChange={(e) => setOrigin(e.target.value)} required disabled={isSubmitting}>
+            <option value="">Select Origin</option>
+            {stations.filter((s) => s !== destination).map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
 
-        <select value={destination} onChange={(e) => setDestination(e.target.value)} required disabled={isSubmitting}>
-          <option value="">Select Destination</option>
-          {stations.filter((s) => s !== origin).map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
+        <button
+          type="button"
+          className="route__swap"
+          onClick={swapStations}
+          disabled={isSubmitting || (!origin && !destination)}
+          aria-label="Swap origin and destination"
+          title="Swap stations"
+        >
+          <ArrowLeftRight size={18} />
+        </button>
+
+        <Field label="To" icon={<MapPin size={16} />}>
+          <select value={destination} onChange={(e) => setDestination(e.target.value)} required disabled={isSubmitting}>
+            <option value="">Select Destination</option>
+            {stations.filter((s) => s !== origin).map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </Field>
       </div>
 
-      <div className="form-row">
-        <select value={tripType} onChange={(e) => setTripType(e.target.value as "one-way" | "return")} disabled={isSubmitting}>
-          <option value="one-way">One-way</option>
-          <option value="return">Return</option>
-        </select>
-
-        <input type="date" value={travelDate} min={todayIso} onChange={(e) => setTravelDate(e.target.value)} required disabled={isSubmitting} />
-
+      <div className={`grid ${tripType === "return" ? "grid--2" : "grid--1"}`}>
+        <Field label="Departure date" icon={<CalendarDays size={16} />}>
+          <input type="date" value={travelDate} min={todayIso} onChange={(e) => setTravelDate(e.target.value)} required disabled={isSubmitting} />
+        </Field>
         {tripType === "return" && (
-          <input type="date" value={returnDate} min={travelDate || todayIso} onChange={(e) => setReturnDate(e.target.value)} required disabled={isSubmitting} />
+          <Field label="Return date" icon={<CalendarDays size={16} />}>
+            <input type="date" value={returnDate} min={travelDate || todayIso} onChange={(e) => setReturnDate(e.target.value)} required disabled={isSubmitting} />
+          </Field>
         )}
       </div>
 
-      <div className="form-row">
-        <select value={preferredTime} onChange={(e) => setPreferredTime(e.target.value as TimeSlot | "")} required disabled={isSubmitting}>
-          <option value="">Select Preferred Time</option>
-          {availableTimes.length > 0 ? (
-            availableTimes.map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)
-          ) : (
-            <option disabled>No times available today</option>
-          )}
-        </select>
+      <ChoiceGroup<TimeSlot>
+        name="preferredTime"
+        legend="Departure time"
+        value={preferredTime}
+        onChange={setPreferredTime}
+        disabled={isSubmitting}
+        required
+        options={TIME_OPTIONS.map((t) => ({
+          ...t,
+          disabled: !availableTimes.includes(t.value),
+          meta: availableTimes.includes(t.value) ? undefined : "Unavailable",
+        }))}
+      />
+      {availableTimes.length === 0 && (
+        <p className="alert alert--warning"><TriangleAlert size={16} /> No departures left today. Please choose a later date.</p>
+      )}
 
-        <select value={seatClass} onChange={(e) => setSeatClass(e.target.value)} disabled={isSubmitting}>
-          <option value="economy">Economy</option>
-          <option value="business">Business</option>
-          <option value="first">First</option>
-        </select>
-      </div>
+      <ChoiceGroup
+        name="seatClass"
+        legend={tripType === "return" ? "Outbound class" : "Travel class"}
+        value={seatClass}
+        onChange={setSeatClass}
+        disabled={isSubmitting}
+        options={CLASS_OPTIONS}
+      />
 
       {tripType === "return" && (
-        <>
-          <div className="form-row">
-            <label>
-              <input type="checkbox" checked={sameClassBothWays} onChange={() => setSameClassBothWays(!sameClassBothWays)} disabled={isSubmitting} />
-              Same class for return trip
-            </label>
+        <div className="return-block">
+          <div className="return-block__head">
+            <Repeat size={16} /> <span>Return journey</span>
           </div>
+
+          <ChoiceGroup<TimeSlot>
+            name="returnTime"
+            legend="Return time"
+            value={returnTime}
+            onChange={setReturnTime}
+            disabled={isSubmitting || noReturnTimes}
+            required
+            options={TIME_OPTIONS.map((t) => ({
+              ...t,
+              disabled: !returnTimes.includes(t.value),
+              meta: returnTimes.includes(t.value) ? undefined : "Unavailable",
+            }))}
+          />
+          {noReturnTimes && (
+            <p className="alert alert--warning">
+              <TriangleAlert size={16} /> No valid return times for same-day travel. Change times or date.
+            </p>
+          )}
+
+          <label className="switch">
+            <input
+              type="checkbox"
+              checked={sameClassBothWays}
+              onChange={() => setSameClassBothWays(!sameClassBothWays)}
+              disabled={isSubmitting}
+            />
+            <span className="switch__track" aria-hidden="true"><span className="switch__thumb" /></span>
+            <span>Same class for return trip</span>
+          </label>
 
           {!sameClassBothWays && (
-            <div className="form-row">
-              <select value={returnSeatClass} onChange={(e) => setReturnSeatClass(e.target.value)} required disabled={isSubmitting}>
-                <option value="">Return class</option>
-                <option value="economy">Economy</option>
-                <option value="business">Business</option>
-                <option value="first">First</option>
-              </select>
-            </div>
+            <ChoiceGroup
+              name="returnSeatClass"
+              legend="Return class"
+              value={returnSeatClass}
+              onChange={setReturnSeatClass}
+              disabled={isSubmitting}
+              required
+              options={CLASS_OPTIONS}
+            />
           )}
-
-          {preferredTime && getAvailableReturnTimes(preferredTime).length === 0 && (
-            <p className="warning-text">⚠️ No valid return times for same-day travel. Change times or date.</p>
-          )}
-
-          <div className="form-row">
-            <select value={returnTime} onChange={(e) => setReturnTime(e.target.value as TimeSlot | "")} required disabled={isSubmitting || getAvailableReturnTimes(preferredTime).length === 0}>
-              <option value="">Select Return Time</option>
-              {getAvailableReturnTimes(preferredTime).map((t) => <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
-            </select>
-          </div>
-        </>
+        </div>
       )}
-    </div>
+    </Section>
   );
 };
 

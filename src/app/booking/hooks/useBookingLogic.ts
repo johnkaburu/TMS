@@ -39,8 +39,8 @@ export const useBookingLogic = () => {
     });
   };
 
-  const submitBooking = async (): Promise<boolean> => {
-    if (!validateForm()) return false;
+  const submitBooking = async (): Promise<BookingPayload | null> => {
+    if (!validateForm()) return null;
 
     setIsSubmitting(true);
 
@@ -70,12 +70,11 @@ export const useBookingLogic = () => {
 
     try {
       await submitBookingToAPI(payload);
-      alert("Booking submitted successfully (simulated).");
-      return true;
+      return payload;
     } catch (err) {
       console.error(err);
       alert("Failed to submit booking.");
-      return false;
+      return null;
     } finally {
       setIsSubmitting(false);
     }

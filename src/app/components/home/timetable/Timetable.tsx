@@ -1,92 +1,52 @@
-import React from 'react'
-import './timetable.scss'
+import React from "react";
+import Link from "next/link";
+import { ArrowRight, Clock, MapPin, Route } from "lucide-react";
+import { EXPRESS_SERVICE, formatDuration, formatKsh, minutesBetween } from "@/lib/railData";
+import "./timetable.scss";
 
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+/** Home-page preview of the main route, rendered as a journey line. */
+export const Timetable: React.FC = () => {
+  const { stops, name } = EXPRESS_SERVICE;
+  const first = stops[0];
+  const last = stops[stops.length - 1];
+  const duration = formatDuration(minutesBetween(first.departure!, last.arrival!));
 
-interface TrainStop {
-  station: string
-  arrivalTime: string
-  departureTime: string
-  amount: string
-}
-
-const trainSchedule:TrainStop[] = [
-  {
-    station: "Nairobi",
-    arrivalTime: "—",
-    departureTime: "06:30 AM",
-    amount: "KSh 1,200",
-  },
-  {
-    station: "Athi River",
-    arrivalTime: "07:00 AM",
-    departureTime: "07:05 AM",
-    amount: "KSh 1,100",
-  },
-  {
-    station: "Emali",
-    arrivalTime: "08:00 AM",
-    departureTime: "08:05 AM",
-    amount: "KSh 950",
-  },
-  {
-    station: "Mtito Andei",
-    arrivalTime: "09:00 AM",
-    departureTime: "09:10 AM",
-    amount: "KSh 800",
-  },
-  {
-    station: "Voi",
-    arrivalTime: "10:30 AM",
-    departureTime: "10:40 AM",
-    amount: "KSh 650",
-  },
-  {
-    station: "Miasenyi",
-    arrivalTime: "11:30 AM",
-    departureTime: "11:35 AM",
-    amount: "KSh 500",
-  },
-  {
-    station: "Mombasa Terminus",
-    arrivalTime: "12:30 PM",
-    departureTime: "—",
-    amount: "KSh 0",
-  },
-]
-
-export const Timetable:React.FC = () => {  
   return (
-    <Table className='table-container'>
-      <TableCaption className='TableCaption'>Train Schedule Timetable</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[160px]">Station</TableHead>
-          <TableHead>Arrival Time</TableHead>
-          <TableHead>Departure Time</TableHead>
-          <TableHead>Fare</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {trainSchedule.map((stop, index) => (
-          <TableRow key={index}>
-            <TableCell className="font-medium">{stop.station}</TableCell>
-            <TableCell>{stop.arrivalTime}</TableCell>
-            <TableCell>{stop.departureTime}</TableCell>
-            <TableCell>{stop.amount}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
-}
+    <section className="section route-preview">
+      <div className="container">
+        <div className="section-head section-head--split">
+          <div>
+            <span className="eyebrow"><Route size={14} /> Route at a glance</span>
+            <h2 className="section-title">Nairobi to the coast in {duration}</h2>
+            <p className="section-lead">
+              The {name} stops at {stops.length - 2} stations along the way. Board wherever suits you.
+            </p>
+          </div>
+          <Link href="/timetable" className="btn btn--outline">
+            Full timetable <ArrowRight size={16} className="btn__arrow" />
+          </Link>
+        </div>
 
-export default Timetable
+        <ol className="journey">
+          {stops.map((stop, i) => {
+            const isEnd = i === 0 || i === stops.length - 1;
+            return (
+              <li key={stop.station} className={`journey__stop ${isEnd ? "journey__stop--end" : ""}`}>
+                <span className="journey__dot" aria-hidden="true">{isEnd && <MapPin size={12} />}</span>
+                <div className="journey__info">
+                  <span className="journey__time">
+                    <Clock size={12} /> {stop.departure ?? stop.arrival}
+                  </span>
+                  <span className="journey__station">{stop.station}</span>
+                  {stop.fareToTerminus > 0 && <span className="journey__fare">from {formatKsh(stop.fareToTerminus)}</span>}
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </section>
+  );
+};
+
+export default Timetable;

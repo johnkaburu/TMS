@@ -7,8 +7,8 @@ import { AdultDetail, ChildDetail } from "../types/booking";
 const MAX_PASSENGERS = 10;
 
 export const usePassengers = () => {
-  const [adults, setAdults] = useState<number>(1);
-  const [children, setChildren] = useState<number>(0);
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
   const [adultDetails, setAdultDetails] = useState<AdultDetail[]>([
     { name: "", id: "" },
   ]);

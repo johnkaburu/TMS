@@ -1,52 +1,78 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ArrowRight, Menu, TrainFront, X } from "lucide-react";
+import { BRAND } from "@/lib/railData";
 import "./Navbar.scss";
 
+const LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/timetable", label: "Timetable" },
+  { href: "/booking", label: "Booking" },
+  { href: "/contact", label: "Contact" },
+];
+
 export default function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const toggleMenu = () => {
-    setMobileMenuOpen(prev => !prev);
-  };
+  // Close the mobile menu whenever the route changes
+  useEffect(() => setOpen(false), [pathname]);
 
-  const closeMenu = () => {
-    setMobileMenuOpen(false);
-  };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname?.startsWith(href));
 
   return (
-    <header className="navbar">
-      <nav className="navbar__container">
-        <div className="navbar__logo">🚆 RailEase</div>
+    <header className={`navbar ${scrolled ? "navbar--scrolled" : ""} ${open ? "navbar--open" : ""}`}>
+      <nav className="navbar__container" aria-label="Main">
+        <Link href="/" className="navbar__logo" aria-label={`${BRAND.name} home`}>
+          <span className="navbar__logo-mark"><TrainFront size={18} /></span>
+          {BRAND.name}
+        </Link>
 
         <ul className="navbar__links">
-          <li><Link href="/">Home</Link></li>
-          <li><Link href="/timetable">Timetable</Link></li>
-          <li><Link href="/booking">Booking</Link></li>
-          <li><Link href="/contact">Contact</Link></li>
+          {LINKS.map((l) => (
+            <li key={l.href}>
+              <Link href={l.href} className={isActive(l.href) ? "is-active" : ""} aria-current={isActive(l.href) ? "page" : undefined}>
+                {l.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
-        <div className="navbar__cta">
-          <Link href="/booking">
-            <Button>Book Now</Button>
-          </Link>
-        </div>
+        <Link href="/booking" className="btn btn--primary btn--sm navbar__cta">
+          Book now <ArrowRight size={15} className="btn__arrow" />
+        </Link>
 
-        <button className="navbar__menu-btn" onClick={toggleMenu}>
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        <button
+          type="button"
+          className="navbar__menu-btn"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? "Close menu" : "Open menu"}
+        >
+          {open ? <X size={22} /> : <Menu size={22} />}
         </button>
       </nav>
 
-      <div className={`navbar__mobile-menu ${mobileMenuOpen ? "open" : ""}`}>
-        <Link href="/" onClick={closeMenu}>Home</Link>
-        <Link href="/timetable" onClick={closeMenu}>Timetable</Link>
-        <Link href="/booking" onClick={closeMenu}>Booking</Link>
-        <Link href="/contact" onClick={closeMenu}>Contact</Link>
-        <Link href="/booking">
-          <Button className="navbar__mobile-btn">Book Now</Button>
+      <div id="mobile-menu" className="navbar__mobile" hidden={!open}>
+        {LINKS.map((l) => (
+          <Link key={l.href} href={l.href} className={isActive(l.href) ? "is-active" : ""}>
+            {l.label}
+          </Link>
+        ))}
+        <Link href="/booking" className="btn btn--primary btn--block">
+          Book now <ArrowRight size={16} className="btn__arrow" />
         </Link>
       </div>
     </header>

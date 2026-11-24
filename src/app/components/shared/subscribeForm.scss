@@ -1,0 +1,74 @@
+@import "../../tokens";
+
+.subscribe {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 460px;
+
+  &__field {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+
+    svg {
+      position: absolute;
+      left: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      height: 44px;
+      padding: 0 0.9rem 0 2.5rem;
+      border-radius: $radius-md;
+      font-size: 0.92rem;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+      &:focus {
+        outline: none;
+        box-shadow: $focus-ring;
+      }
+    }
+  }
+
+  &--light &__field {
+    svg { color: $neutral-400; }
+    input {
+      border: 1.5px solid $neutral-200;
+      background: #fff;
+      color: $neutral-900;
+      &:focus { border-color: $primary-500; }
+    }
+  }
+
+  &--dark &__field {
+    svg { color: rgba(#fff, 0.55); }
+    input {
+      border: 1.5px solid rgba(#fff, 0.18);
+      background: rgba(#fff, 0.08);
+      color: #fff;
+      &::placeholder { color: rgba(#fff, 0.5); }
+      &:focus { border-color: $accent-400; background: rgba(#fff, 0.12); }
+    }
+  }
+
+  &__done {
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    animation: fadeUp 0.3s $ease;
+
+    svg { color: $success; flex-shrink: 0; }
+  }
+
+  &--dark.subscribe__done { color: rgba(#fff, 0.9); }
+  &--light.subscribe__done { color: $neutral-700; }
+
+  @media (max-width: 420px) {
+    flex-direction: column;
+    .btn { width: 100%; }
+  }
+}

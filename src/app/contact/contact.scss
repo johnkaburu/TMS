@@ -1,0 +1,214 @@
+@import "../tokens";
+
+.contact-page {
+  background: $neutral-100;
+  padding-bottom: 4rem;
+
+  &__channels {
+    @include container;
+    position: relative;
+    z-index: 3;
+    margin-top: -4.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  &__grid {
+    @include container;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    &__channels,
+    &__grid { grid-template-columns: 1fr; }
+  }
+}
+
+.channel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1.5rem;
+  border-radius: $radius-lg;
+  background: #fff;
+  border: 1px solid $neutral-200;
+  box-shadow: $shadow-card;
+  transition: transform 0.2s $ease, box-shadow 0.2s $ease, border-color 0.2s;
+
+  &--link {
+    @include focus-ring;
+
+    &:hover {
+      transform: translateY(-3px);
+      border-color: $primary-200;
+      box-shadow: $shadow-lg;
+    }
+  }
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 0.75rem;
+    border-radius: $radius-md;
+    background: $primary-50;
+    color: $primary-600;
+  }
+
+  &__title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $text-tertiary;
+  }
+
+  &__value {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $neutral-900;
+    word-break: break-word;
+  }
+
+  &__note {
+    margin-top: 0.2rem;
+    font-size: 0.82rem;
+    color: $text-tertiary;
+  }
+}
+
+.contact-card {
+  padding: 2rem;
+  border-radius: $radius-lg;
+  background: #fff;
+  border: 1px solid $neutral-200;
+  box-shadow: $shadow-card;
+
+  &__title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  &__desc {
+    margin-top: 0.3rem;
+    font-size: 0.9rem;
+    color: $text-tertiary;
+  }
+
+  @media (max-width: 560px) { padding: 1.25rem; }
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-top: 1.5rem;
+
+  label { display: block; }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 560px) { grid-template-columns: 1fr; }
+  }
+
+  .btn { align-self: flex-start; }
+}
+
+.contact-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 2.5rem 1rem 1rem;
+  text-align: center;
+  animation: fadeUp 0.35s $ease;
+
+  &__icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: $success-light;
+    color: $success-dark;
+  }
+
+  h3 { font-size: 1.25rem; font-weight: 800; }
+  p { max-width: 360px; color: $text-secondary; margin-bottom: 0.75rem; }
+}
+
+.faq {
+  padding: 0.5rem 0.25rem;
+
+  &__title {
+    margin-top: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  &__item {
+    border-radius: $radius-md;
+    background: #fff;
+    border: 1px solid $neutral-200;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &[open] {
+      border-color: $primary-200;
+      box-shadow: $shadow-card;
+
+      summary svg { transform: rotate(180deg); color: $primary-600; }
+    }
+
+    summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.15rem;
+      font-weight: 600;
+      color: $neutral-900;
+      cursor: pointer;
+      list-style: none;
+      border-radius: $radius-md;
+      @include focus-ring;
+
+      &::-webkit-details-marker { display: none; }
+
+      svg {
+        flex-shrink: 0;
+        color: $neutral-400;
+        transition: transform 0.25s $ease;
+      }
+    }
+
+    p {
+      padding: 0 1.15rem 1.1rem;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      color: $text-secondary;
+
+      a {
+        color: $primary-600;
+        font-weight: 600;
+        &:hover { text-decoration: underline; }
+      }
+    }
+  }
+}
+
